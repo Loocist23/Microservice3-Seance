@@ -9,6 +9,20 @@ export const getAllRoom = async (req, res) => {
     }
 }
 
+export const getRoomById = async (req, res) => {
+    try {
+        const room = await Room.findByPk(req.params.id);
+
+        if(!room) {
+            return res.status(404).json({message: 'Room dont exist', error: error.message});
+        }
+        
+        res.status(200).json(room);
+    } catch(error) {
+        res.status(500).json({message: 'Server error', error: error.message});
+    }
+}
+
 export const createRoom = async (req, res) => {
     try {
         const {
