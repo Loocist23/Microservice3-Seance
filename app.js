@@ -7,9 +7,10 @@ import logger from 'morgan';
 import { fileURLToPath } from 'url';
 
 import sequelize from './public/connexion/database.js';
-import indexRouter from './routes/index.js';
-import usersRouter from './routes/users.js';
 import {Show, Room } from './public/model/index.js';
+
+import roomRouter from './routes/room.routes.js';
+import showRouter from './routes/show.routes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,8 +24,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/room', roomRouter);
+app.use('/api/show', showRouter);
+app.get('/', (req, res) => {
+    res.json({
+        message: 'MicroService Séances de cinéma', 
+        endpoints: {
+            room: '/api/room',
+            show: '/api/show'
+        }
+    });
+});
+
 
 await sequelize.authenticate();
 console.log('✅ MySQL connecté');
