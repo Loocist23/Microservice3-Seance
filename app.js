@@ -9,6 +9,7 @@ import { fileURLToPath } from 'url';
 import sequelize from './public/connexion/database.js';
 import indexRouter from './routes/index.js';
 import usersRouter from './routes/users.js';
+import {Show, Room } from './public/model/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -27,6 +28,8 @@ app.use('/users', usersRouter);
 
 await sequelize.authenticate();
 console.log('✅ MySQL connecté');
+
+await sequelize.sync({ alter: true });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Server up on ${PORT}`));
