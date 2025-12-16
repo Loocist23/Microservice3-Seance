@@ -28,6 +28,18 @@ export const getShowById = async (req,res) => {
     }
 }
 
+export const getShowByRoom = async (req,res) => {
+    try {
+        const shows = await Show.findAll({
+            where: {id_room: req.params.id_room}
+        });
+
+        res.status(200).json(shows);
+    } catch(error) {
+        res.status(500).json({message: 'Server error', error: error.message});
+    }
+}
+
 export const createShow = async (req,res) => {
     try {
         const {
