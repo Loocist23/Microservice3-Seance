@@ -1,9 +1,11 @@
 import express from 'express';
-//import controller
+import {
+    getAllShow
+} from '../public/controllers/show.controller.js';
 
 const router = express.Router();
 
-// router.get('/', getAllShow);
+router.get('/', getAllShow);
 // router.get('/', getShowById);
 // router.get('/room/:id_room', getShowByRoom);
 // router.post('/', createShow);
