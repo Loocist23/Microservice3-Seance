@@ -2,9 +2,14 @@
 Cette API permet de créer des salles de cinéma ainsi que des programmations de séances. <br>
 
 ## Utilisation
-### Lancement
+### Lancement Docker
 ----
-A compléter...
+Cloner dans un premier temps le repo sur votre poste en local.<br>
+Une fois placé dans le repo cloné lancez cette commande : `docker compose up --build`.<br>
+ATTENTION : il est nécessaire d'avoir Docker d'installé sur son poste.<br><br>
+Pour arrêter le container, il suffit de faire : `docker compose down`
+<br><br>
+Pour faire les appels API, il vous suffit de mettre en suffixe des routes : `http://localhost:3300/`
 
 ### Appels API 
 ----
