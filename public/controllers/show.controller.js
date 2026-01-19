@@ -44,11 +44,12 @@ export const createShow = async (req,res) => {
     try {
         const {
             date,
+            price,
             id_movie,
             id_room
         } = req.body;
 
-        if(!date || !id_movie || !id_room) {
+        if(!date || !price || !id_movie || !id_room) {
             return res.status(400).json({message: 'Attribute missing to create Show'});
         }
 
@@ -60,6 +61,7 @@ export const createShow = async (req,res) => {
 
         const newShow = await Show.create({
             date,
+            price,
             id_movie,
             id_room
         });

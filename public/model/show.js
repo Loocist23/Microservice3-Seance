@@ -10,6 +10,7 @@ const Show = sequelize.define('Show', {
         autoIncrement: true
     }, 
     date: DataTypes.DATE,
+    price: DataTypes.FLOAT,
     id_movie: {
         type: DataTypes.INTEGER,
         allowNull: false, 
