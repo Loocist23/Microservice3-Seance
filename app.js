@@ -6,11 +6,13 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { fileURLToPath } from 'url';
 
-import sequelize from './public/connexion/database.js';
-import {Show, Room } from './public/model/index.js';
+import sequelize from './src/config/database.js';
+import {Show, Room } from './src/models/index.js';
 
-import roomRouter from './routes/room.routes.js';
-import showRouter from './routes/show.routes.js';
+import roomRouter from './src/routes/room.routes.js';
+import showRouter from './src/routes/show.routes.js';
+
+import { errorHandler } from './src/middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -35,6 +37,7 @@ app.get('/', (req, res) => {
         }
     });
 });
+app.use(errorHandler);
 
 
 await sequelize.authenticate();
@@ -42,7 +45,7 @@ console.log('✅ MySQL connecté');
 
 await sequelize.sync({ alter: true });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3300;
 app.listen(PORT, () => console.log(`🚀 Server up on ${PORT}`));
 
 export default app;

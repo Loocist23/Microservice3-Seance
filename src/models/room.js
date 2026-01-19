@@ -1,4 +1,4 @@
-import sequelize from '../connexion/database.js';
+import sequelize from '../config/database.js';
 import { DataTypes } from 'sequelize';
 
 const Room = sequelize.define('Room', {

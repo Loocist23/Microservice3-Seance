@@ -6,7 +6,7 @@ import {
     createShow, 
     modifyShow, 
     deleteShow
-} from '../public/controllers/show.controller.js';
+} from '../controllers/show.controller.js';
 
 const router = express.Router();
 

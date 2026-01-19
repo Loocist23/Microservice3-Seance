@@ -5,7 +5,7 @@ import {
   createRoom, 
   modifyRoom, 
   deleteRoom
-} from '../public/controllers/room.controller.js';
+} from '../controllers/room.controller.js';
 
 const router = express.Router();
 
