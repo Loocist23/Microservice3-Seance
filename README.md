@@ -44,7 +44,7 @@ Exemple de body :
 Supprime une salle par son identifiant.
 
 #### 🔵 GET /api/show  
-Récupère toutes les séances avec les informations de la salle associée.
+Récupère toutes les séances avec les informations de la salle associée ainsi que le nombre de places déjà réservées (`seats_taken`).
 
 #### 🔵 GET /api/show/:id  
 Récupère une séance par son identifiant.
@@ -77,6 +77,19 @@ Exemple de body :
 ```
 
 Si id_room est modifié, la salle doit exister.
+
+#### 🔵 PATCH /api/show/:id  
+Met à jour partiellement une séance (horaire, salle, prix…). Utiliser cette route lorsque seuls certains champs changent.
+
+#### 🔵 POST /api/show/:id/reserve  
+Réserve un nombre de places pour une séance tout en respectant la capacité de la salle.  
+Body attendu :
+```
+{
+  "seats": 3
+}
+```
+La requête échoue avec un HTTP 409 si la réservation dépasse le quota disponible.
 
 #### 🔵 DELETE /api/show/:id  
 Supprime une séance par son identifiant.
