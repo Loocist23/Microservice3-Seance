@@ -1,105 +1,150 @@
-# API micro service : Architecture logicielle
-Cette API permet de créer des salles de cinéma ainsi que des programmations de séances. <br>
+# Microservice Seance
 
-## Utilisation
-### Lancement Docker
-----
-Cloner dans un premier temps le repo sur votre poste en local.<br>
-Une fois placé dans le repo cloné lancez cette commande : `docker compose up --build`.<br>
-ATTENTION : il est nécessaire d'avoir Docker d'installé sur son poste.<br><br>
-Pour arrêter le container, il suffit de faire : `docker compose down`
-<br><br>
-Pour faire les appels API, il vous suffit de mettre en suffixe des routes : `http://localhost:3300/`
+Microservice 3 du projet "Architecture logicielle" : gestion des seances de cinema et des salles associees. Ce service expose une API REST pour creer, lister, modifier et supprimer des salles et des seances. Les seances referencent un film via `id_movie` (reference logique vers le microservice Films).
 
-### Appels API 
-----
-#### 🟢 GET /api/room  
-Récupère la liste de toutes les salles disponibles.
+## Fonctionnalites
+- CRUD des salles (numero, nombre de places, type de salle)
+- CRUD des seances (date, salle, film via id_movie)
+- Recuperation des seances par salle
+- Inclusion des infos de salle dans `GET /api/show`, `GET /api/show/:id` et `GET /api/show/room/:id_room`
+- Reservation de places pour une seance (`POST /api/show/:id/reserve`)
 
-#### 🟢 GET /api/room/:id  
-Récupère une salle par son identifiant.
+## Stack technique
+- NodeJS (Express, ES modules)
+- Sequelize + MySQL
+- CORS + logs HTTP avec morgan
 
-#### 🟢 POST /api/room  
-Crée une nouvelle salle.  
-Body attendu :
-```
+## Modele de donnees
+Room (table `Room`)
+- id: int, auto increment
+- room_number: int (unique)
+- seat_number: int
+- room_type: string (optionnel)
+
+Show (table `Show`)
+- id: int, auto increment
+- date: datetime (ISO-8601)
+- id_movie: int (reference logique vers microservice Films)
+- id_room: int (FK vers Room.id)
+
+## API
+Base URL : `http://localhost:3000` (ou `PORT`)
+
+Endpoints principaux
+
+| Methode | Route | Description |
+| --- | --- | --- |
+| GET | `/` | Infos service |
+| GET | `/api/room` | Liste des salles |
+| GET | `/api/room/:id` | Detail d'une salle |
+| POST | `/api/room` | Creer une salle |
+| PUT | `/api/room/:id` | Modifier une salle |
+| DELETE | `/api/room/:id` | Supprimer une salle |
+| GET | `/api/show` | Liste des seances |
+| GET | `/api/show/:id` | Detail d'une seance |
+| GET | `/api/show/room/:id_room` | Seances par salle |
+| POST | `/api/show` | Creer une seance |
+| POST | `/api/show/:id/reserve` | Reserver des places |
+| PUT | `/api/show/:id` | Modifier une seance |
+| PATCH | `/api/show/:id` | Modifier partiellement une seance |
+| DELETE | `/api/show/:id` | Supprimer une seance |
+
+Notes
+- Les reponses de seance incluent la salle associee sous la cle `Room` (association Sequelize).
+- `POST /api/show/:id/reserve` accepte un nombre de places via `seats`, `places`, `quantity` ou `count`.
+
+Important
+- Le controleur exige un champ `price` lors de la creation d'une seance, mais le modele Sequelize ne declare pas ce champ. Il n'est donc pas persiste dans l'etat actuel.
+- La reservation utilise `seats_taken`, mais ce champ n'est pas declare dans le modele `Show`.
+
+Exemples de payload
+
+Creer une salle
+```json
 {
-  "room_number": 40,
-  "seat_number": 100,
-  "room_type": "Dolby"
-}
-```
-
-#### 🟢 PUT /api/room/:id  
-Modifie une salle existante.  
-Exemple de body :
-```
-{
+  "room_number": 1,
   "seat_number": 120,
   "room_type": "IMAX"
 }
 ```
 
-#### 🟢 DELETE /api/room/:id  
-Supprime une salle par son identifiant.
-
-#### 🔵 GET /api/show  
-Récupère toutes les séances avec les informations de la salle associée ainsi que le nombre de places déjà réservées (`seats_taken`).
-
-#### 🔵 GET /api/show/:id  
-Récupère une séance par son identifiant.
-
-#### 🔵 GET /api/show/room/:id_room  
-Récupère toutes les séances associées à une salle donnée.
-
-#### 🔵 POST /api/show  
-Crée une nouvelle séance.  
-Body attendu :
-```
+Creer une seance
+```json
 {
-  "date": "2026-01-10T20:30:00",
+  "date": "2024-10-01T20:00:00.000Z",
+  "price": 12.5,
   "id_movie": 5,
-  "id_room": 2
+  "id_room": 1
 }
 ```
 
-**id_room** doit correspondre à une salle existante.  
-**id_movie** correspond à l’identifiant du film (géré par un autre microservice).
+## Configuration
+Variables d'environnement requises
+- `DB_NAME`
+- `DB_USER`
+- `DB_PASSWORD`
+- `DB_HOST`
+- `DB_PORT`
 
-#### 🔵 PUT /api/show/:id  
-Modifie une séance existante.  
-Exemple de body :
+Variables optionnelles
+- `PORT` (defaut: 3000)
+- `NODE_ENV` (defaut: development)
+
+Au demarrage, l'application fait un `sequelize.authenticate()` puis un `sequelize.sync({ alter: true })`.
+
+Exemple `.env`
+```bash
+DB_NAME=seance_db
+DB_USER=root
+DB_PASSWORD=secret
+DB_HOST=127.0.0.1
+DB_PORT=3306
+PORT=3000
 ```
+
+## Format d'erreur
+En cas d'erreur, la reponse est du type:
+```json
 {
-  "date": "2026-01-11T18:00:00",
-  "id_room": 3
+  "status": "fail",
+  "message": "Room dont exist"
 }
 ```
 
-Si id_room est modifié, la salle doit exister.
-
-#### 🔵 PATCH /api/show/:id  
-Met à jour partiellement une séance (horaire, salle, prix…). Utiliser cette route lorsque seuls certains champs changent.
-
-#### 🔵 POST /api/show/:id/reserve  
-Réserve un nombre de places pour une séance tout en respectant la capacité de la salle.  
-Body attendu :
+## Lancer en local
+```bash
+yarn install
+yarn dev
 ```
-{
-  "seats": 3
-}
+
+Lancer en production
+```bash
+yarn start
 ```
-La requête échoue avec un HTTP 409 si la réservation dépasse le quota disponible.
 
-#### 🔵 DELETE /api/show/:id  
-Supprime une séance par son identifiant.
-
-
-Codes de réponse HTTP
+## Docker
+Build
+```bash
+docker build -t microservice-seance .
 ```
-200 : Succès  
-201 : Ressource créée  
-400 : Données manquantes ou invalides  
-404 : Ressource introuvable  
-500 : Erreur serveur
+
+Run
+```bash
+docker run --rm -p 3000:3000 \
+  -e DB_NAME=seance_db \
+  -e DB_USER=root \
+  -e DB_PASSWORD=secret \
+  -e DB_HOST=host.docker.internal \
+  -e DB_PORT=3306 \
+  microservice-seance
+```
+
+## Docker Compose
+Le fichier `docker-compose.yml` lance:
+- API sur `http://localhost:3300`
+- MySQL sur `localhost:3307`
+
+Lancement
+```bash
+docker compose up --build
 ```
