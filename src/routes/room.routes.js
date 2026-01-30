@@ -1,24 +1,18 @@
 import express from 'express';
 import {
-  createRoom,
-  deleteRoom,
-  getAllRoom,
+  getAllRoom, 
   getRoomById,
-  modifyRoom,
+  createRoom, 
+  modifyRoom, 
+  deleteRoom
 } from '../controllers/room.controller.js';
-import validateRequest from '../middleware/validateRequest.js';
-import {
-  createRoomValidation,
-  roomIdParamValidation,
-  updateRoomValidation,
-} from '../validators/room.validators.js';
 
 const router = express.Router();
 
 router.get('/', getAllRoom);
-router.get('/:id', roomIdParamValidation, validateRequest, getRoomById);
-router.post('/', createRoomValidation, validateRequest, createRoom);
-router.put('/:id', roomIdParamValidation, updateRoomValidation, validateRequest, modifyRoom);
-router.delete('/:id', roomIdParamValidation, validateRequest, deleteRoom);
+router.get('/:id', getRoomById);
+router.post('/', createRoom);
+router.put('/:id', modifyRoom);
+router.delete('/:id', deleteRoom);
 
 export default router;

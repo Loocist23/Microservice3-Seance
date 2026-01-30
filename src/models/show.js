@@ -1,37 +1,35 @@
-import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
+import { DataTypes } from 'sequelize';
 
-const Show = sequelize.define(
-  'Show',
-  {
+const Show = sequelize.define('Show', {
     id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      allowNull: false,
-      unique: true,
-      autoIncrement: true,
-    },
-    date: {
-      type: DataTypes.DATE,
-      allowNull: false,
-    },
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        unique: true, 
+        autoIncrement: true
+    }, 
+    date: DataTypes.DATE,
+    price: DataTypes.FLOAT,
     id_movie: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      comment: 'key from Movie microservice',
+        type: DataTypes.INTEGER,
+        allowNull: false, 
+        comment: 'key from Movie in microservice2'
     },
     id_room: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Room',
-        key: 'id',
-      },
+        type: DataTypes.INTEGER,
+        references: {
+            model:'Room',
+            key: 'id'
+        }
     },
-  },
-  {
-    tableName: 'Show',
-  }
-);
+    seats_taken: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0
+    }
+}, {
+    tableName: 'Show'
+});
 
 export default Show;

@@ -1,36 +1,23 @@
-import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
+import { DataTypes } from 'sequelize';
 
-const Room = sequelize.define(
-  'Room',
-  {
+const Room = sequelize.define('Room', {
     id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      allowNull: false,
-      unique: true,
-      autoIncrement: true,
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        unique: true, 
+        autoIncrement: true
     },
     room_number: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        unique: true
     },
-    seat_number: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        min: 1,
-      },
-    },
-    room_type: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-  },
-  {
-    tableName: 'Room',
-  }
-);
+    seat_number: DataTypes.INTEGER,
+    room_type: DataTypes.STRING
+}, {
+    tableName: 'Room'
+});
 
 export default Room;
