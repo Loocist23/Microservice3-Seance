@@ -45,7 +45,4 @@ console.log('✅ MySQL connecté');
 
 await sequelize.sync({ alter: true });
 
-const PORT = process.env.PORT || 3300;
-app.listen(PORT, () => console.log(`🚀 Server up on ${PORT}`));
-
 export default app;

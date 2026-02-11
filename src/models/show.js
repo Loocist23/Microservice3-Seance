@@ -22,6 +22,11 @@ const Show = sequelize.define('Show', {
             model:'Room',
             key: 'id'
         }
+    },
+    seats_taken: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
+        defaultValue: 0
     }
 }, {
     tableName: 'Show'
