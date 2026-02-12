@@ -5,8 +5,8 @@ FROM node:20-alpine AS base
 WORKDIR /usr/src/app
 
 # Install only production dependencies
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --production && yarn cache clean
+COPY package*.json ./
+RUN npm install --omit=dev
 
 # Copy source
 COPY . .
